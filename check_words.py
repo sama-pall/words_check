@@ -17,7 +17,7 @@ from datetime import datetime
 
 def open_file(in_file) -> list:
     wlist = []
-    with open(in_file, 'r') as fh:
+    with open(in_file, 'r', encoding='utf-8') as fh:
         for line in fh.readlines():
             if not line.startswith('#'):
                 wlist.append(line.strip().lower().split('\t'))
@@ -28,52 +28,51 @@ def open_file(in_file) -> list:
 
 
 def get_direction_of_translation():
-    return bool(random.randint(0,1))
+    return bool(random.randint(0, 1))
 
 
-def eng_ru_dir(word, need_to_learn: list) -> list:
+def eng_ru_dir(word, need_to_learn: list):
     print(word[0])
     print(word[1])
     print(word[4].replace(word[0], '***'))
-    if word[3] == input('Enter your translation: ').strip():
+    answer = input('Enter your translation: ').strip().encode("utf-8")
+    if word[3] == answer:
         print('Your are right. Well done')
     else:
         print(f'Unfortunately you was wrong. Right answer is {word[3]}')
         need_to_learn.append(word)
-    return need_to_learn
 
 
 def ru_eng_dir(word, need_to_learn: list):
     print(word[3])
     print(word[1])
     print(word[4].replace(word[0], '***'))
-    if word[0] == input('Enter your translation: ').strip():
+    answer = input('Enter your translation: ').strip().encode("utf-8")
+    if word[0] == answer:
         print('Your are right. Well done')
     else:
         print(f'Unfortunately you was wrong. Right answer is {word[0]}')
         need_to_learn.append(word)
-    return need_to_learn
 
 
 def write_file_to_learn(name: str, wlist: list):
     with open(name, 'a') as file:
-        file.write(datetime.now().strftime("%Y-%m-%d %H-%M-%S"))
+        file.write(datetime.now().strftime("%Y-%m-%d %H-%M-%S") + '\n')
         for word in wlist:
-            file.write(word)
-
+            file.write(','.join(word) + '\n')
 
 def main():
     print('Let\'s check you knowledge')
     word_list = open_file(sys.argv[1])
-
+    need_to_learn = []
     while len(word_list):
-        word = word_list.pop(random.randint(0,len(word_list) - 1))
-        need_to_learn = []
+        word = word_list.pop(random.randint(0, len(word_list) - 1))
+
         if get_direction_of_translation():
-            need_to_learn = ru_eng_dir(word, need_to_learn)
+            ru_eng_dir(word, need_to_learn)
             print()
         else:
-            need_to_learn = eng_ru_dir(word, need_to_learn)
+            eng_ru_dir(word, need_to_learn)
             print()
     print('Congratulation!!! You checked all words')
     print(need_to_learn)
