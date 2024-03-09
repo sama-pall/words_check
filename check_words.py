@@ -64,6 +64,7 @@ def write_file_to_learn(name: str, wlist: list):
 def main():
     print('Let\'s check you knowledge')
     word_list = open_file(sys.argv[1])
+    print(*[len(word) for word in word_list])
     need_to_learn = []
     while len(word_list):
         word = word_list.pop(random.randint(0, len(word_list) - 1))
